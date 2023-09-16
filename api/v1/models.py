@@ -14,7 +14,7 @@ class ProjectAPI(api_tools.APIModeHandler):
         try:
             settings = IntegrationModel.parse_obj(request.json)
         except ValidationError as e:
-            pass
+            return e.errors(), 400
 
         check_connection_response = settings.check_connection()
         if check_connection_response is not True:

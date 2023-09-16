@@ -49,13 +49,13 @@ const AiDialIntegrationModal = {
                 </div>
             </div>
             <div>
-            <span :class="{ 'is-invalid': error.models }" class="font-h5 font-semibold">Models:</span>
+            <span class="font-h5 font-semibold">Models:</span>
             </div>
+            <div class="invalid-feedback d-block">[[ error.models ]]</div>
             <div>
                 <button class="btn btn btn-painted mr-1 rounded-pill mb-1" v-for="model in models"
                     >[[ model ]]
                 </button>
-                <div class="invalid-feedback">[[ error.models ]]</div>
             </div>
             <load-models-button
                     ref="LoadModelsButton"
@@ -147,6 +147,7 @@ const AiDialIntegrationModal = {
             this.delete()
         },
         create() {
+            if (this.has_validation_error()) return;
             this.is_fetching = true
             fetch(this.api_url + this.pluginName, {
                 method: 'POST',
@@ -176,6 +177,7 @@ const AiDialIntegrationModal = {
             }
         },
         update() {
+            if (this.has_validation_error()) return;
             this.is_fetching = true
             fetch(this.api_url + this.id, {
                 method: 'PUT',
@@ -212,6 +214,15 @@ const AiDialIntegrationModal = {
                     `)
                 }
             })
+        },
+        is_empty_field(value) {
+            return value.length === 0
+        },
+        has_validation_error() {
+            if (this.is_empty_field(this.models)) {
+                this.error.models = 'At least one model is required'
+                return true
+            }
         },
         initialState: () => ({
             modal_style: {'height': '100px', 'border': ''},

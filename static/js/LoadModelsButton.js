@@ -27,19 +27,17 @@ const LoadModelsButton = {
             >
                 Load models
             </button>
+            <div class="invalid-feedback" v-if="show_error">[[ error ]]</div>
             <div v-if="is_models_loaded" class="mr-2 cell-input" style="min-width: 250px">
-                <div class="select-validation need-validation" :class="{'invalid-select': !showError(models)}"
-                    :data-valid="hasError(models)">
+                <div>
                     <multiselect-dropdown
                         placeholder="Select models"
                         v-model="selected_models"
                         :list_items="allModels"
-                        :has_error_class="{'invalid-select': !showError(models)}"
                     ></multiselect-dropdown>
                 </div>
             </div>
         </div>
-        <div class="invalid-feedback" v-if="show_error">[[ error ]]</div>
     </div>
     `,
     watch: {
@@ -80,17 +78,12 @@ const LoadModelsButton = {
             if (!response.ok) {
                 this.is_loading_models = false
                 this.$emit('handleError', response)
+                return []
             } else {
                 this.is_models_loaded = true
                 this.is_loading_models = false
                 return response.json();
             }
-        },
-        showError(value) {
-            return this.is_loading_models ? value.length > 0 : true;
-        },
-        hasError(value) {
-            return value?.length > 0;
         },
         initialState: () => ({
             status: 0,
@@ -101,4 +94,3 @@ const LoadModelsButton = {
         })
     }
 }
-// vueApp.component('LoadModelsButton', LoadModelsButton)
