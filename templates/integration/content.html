@@ -1,0 +1,22 @@
+{% set integration_name = 'ai_dial' %}
+{% set display_name = 'AI Dial' %}
+{% set section_name = section_name | default('ai') %}
+
+
+<add-integration-button
+        integration_name="{{ integration_name }}"
+        display_name="{{ display_name }}"
+>
+    <img class="w-5 h-5" src="{{ url_for('%s.static' | format(integration_name), filename='logo.svg') }}"/>
+</add-integration-button>
+
+
+<Ai-Dial-Integration-Modal
+        @register="register"
+        instance_name="{{ integration_name }}"
+        section_name="{{ section_name }}"
+        @update="custom_data.handle_integrations_update"
+
+        display_name="{{ display_name }}"
+        logo_src="{{ url_for('%s.static' | format(integration_name), filename='logo_white.svg') }}"
+></Ai-Dial-Integration-Modal>
