@@ -1,4 +1,4 @@
-const LoadModelsButton = {
+const AiDialModelsButton = {
     delimiters: ['[[', ']]'],
     props: ['error', 'pluginName', 'is_loading_models', 'body_data', 'models'],
     emits: ['handleError', 'update:error', 'update:models'],
@@ -32,6 +32,7 @@ const LoadModelsButton = {
                 <div>
                     <multiselect-dropdown
                         placeholder="Select models"
+                        maxHeight="300"
                         v-model="selected_models"
                         :list_items="allModels"
                     ></multiselect-dropdown>
@@ -60,7 +61,7 @@ const LoadModelsButton = {
             this.is_loading_models = true
             this.loadModelsAPI(this.pluginName, this.body_data).then(res => {
                 this.allModels = res.map(model => ({
-                    name: model.model,
+                    name: model.id,
                 }));
                 this.selected_models = res.filter(model => this.models.includes(model.model)).map(model => model.model);
             })

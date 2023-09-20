@@ -98,7 +98,6 @@ class RPC:
     @web.rpc(f'{integration_name}_set_models', 'set_models')
     @rpc_tools.wrap_exceptions(RuntimeError)
     def set_models(self, payload: dict):
-        log.info(f"{payload=}")
         api_key = SecretField.parse_obj(payload['settings'].get('api_token', {})).unsecret(payload.get('project_id'))
         openai.api_key = api_key
         openai.api_type = payload['settings'].get('api_type')
