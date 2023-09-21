@@ -3,7 +3,7 @@ const AiDialIntegrationModal = {
     props: ['instance_name', 'display_name', 'logo_src', 'section_name'],
     emits: ['update'],
     components: {
-        'load-models-button': LoadModelsButton,
+        'ai-dial-models-button': AiDialModelsButton,
     },
     template: `
 <div
@@ -49,7 +49,7 @@ const AiDialIntegrationModal = {
                 </div>
             </div>
             <div>
-            <span class="font-h5 font-semibold">Models:</span>
+                <span class="font-h5 font-semibold">Models:</span>
             </div>
             <div class="invalid-feedback d-block">[[ error.models ]]</div>
             <div>
@@ -57,15 +57,15 @@ const AiDialIntegrationModal = {
                     >[[ model ]]
                 </button>
             </div>
-            <load-models-button
-                    ref="LoadModelsButton"
-                    :pluginName="pluginName"
-                    :error="error.check_connection"
-                    :body_data="body_data"
-                    v-model:models="models"
-                    @handleError="handleError"
+            <ai-dial-models-button
+                ref="AiDialModelsButton"
+                :pluginName="pluginName"
+                :error="error.check_connection"
+                :body_data="body_data"
+                v-model:models="models"
+                @handleError="handleError"
             >
-            </load-models-button>
+            </ai-dial-models-button>
         </template>
         <template #footer>
             <test-connection-button
@@ -132,7 +132,7 @@ const AiDialIntegrationModal = {
     methods: {
         clear() {
             Object.assign(this.$data, this.initialState())
-            this.$refs.LoadModelsButton.clear();
+            this.$refs.AiDialModelsButton.clear();
         },
         load(stateData) {
             Object.assign(this.$data, stateData)

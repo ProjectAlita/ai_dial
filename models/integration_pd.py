@@ -10,7 +10,7 @@ from tools import rpc_tools
 class IntegrationModel(BaseModel):
     api_token: SecretField | str
     model_name: str = 'gpt-35-turbo'
-    models: list
+    models: list = []
     api_version: str = '2023-03-15-preview'
     api_base: str = "https://ai-proxy.lab.epam.com"
     api_type: str = "azure"
