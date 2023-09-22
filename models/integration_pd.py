@@ -1,9 +1,8 @@
-from pydantic import BaseModel, conlist
-import requests
+from pydantic import BaseModel
 
 from pylon.core.tools import log
 from ...integrations.models.pd.integration import SecretField
-import openai
+
 from tools import rpc_tools
 
 
@@ -19,6 +18,7 @@ class IntegrationModel(BaseModel):
     top_p: float = 0.8
 
     def check_connection(self):
+        import openai
         from tools import session_project
         openai.api_key = self.api_token.unsecret(session_project.get())
         openai.api_type = self.api_type
