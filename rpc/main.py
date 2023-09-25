@@ -45,15 +45,15 @@ def _prepare_conversation(prompt_struct):
     return conversation
 
 def _prepare_result(response):
-    result = {'content': response['choices'][0]['message']['content']}
     if attachments := response['choices'][0]['message'].get('custom_content', {}).get('attachments'):
+        result = {
+            'type': 'image',
+        }
         for attachment in attachments:
             if attachment.get('title') == 'image':
-                # img = {
-                #     'type': attachment['type'],
-                #     'data': 'data:image/png;base64,' + attachment['data']
-                # }
-                result.setdefault('custom_content', []).append(attachment)
+                result.setdefault('content', []).append(attachment)
+        return result
+    result = {'type': 'text', 'content': response['choices'][0]['message']['content']}
     return result
 
 
