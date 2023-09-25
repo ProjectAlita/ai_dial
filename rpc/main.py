@@ -39,6 +39,19 @@ def _prepare_conversation(prompt_struct):
 
     return conversation
 
+def _prepare_result(response):
+    if attachments := response['choices'][0]['message'].get('custom_content', {}).get('attachments'):
+        result = {
+            'type': 'image',
+        }
+        for attachment in attachments:
+            if attachment.get('title') == 'image':
+                result.setdefault('content', []).append(attachment)
+        return result
+    result = {'type': 'text', 'content': response['choices'][0]['message']['content']}
+    return result
+
+
 class RPC:
     integration_name = 'ai_dial'
 
@@ -69,7 +82,9 @@ class RPC:
                 top_p=settings.top_p,
                 messages=conversation
             )
-            result = response['choices'][0]['message']['content']
+            # result = response['choices'][0]['message']['content']
+            result = _prepare_result(response)
+
         except Exception as e:
             log.error(str(e))
             return {"ok": False, "error": f"{str(e)}"}
