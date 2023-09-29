@@ -40,16 +40,31 @@ def _prepare_conversation(prompt_struct):
     return conversation
 
 def _prepare_result(response):
-    if attachments := response['choices'][0]['message'].get('custom_content', {}).get('attachments'):
-        result = {
-            'type': 'image',
-        }
-        for attachment in attachments:
-            if attachment.get('title') == 'image':
-                result.setdefault('content', []).append(attachment)
-        return result
-    result = {'type': 'text', 'content': response['choices'][0]['message']['content']}
-    return result
+    structured_result = {'messages': []}
+    attachments = []
+    if response['choices'][0]['message'].get('content'):
+        structured_result['messages'].append({
+            'type': 'text',
+            'content': response['choices'][0]['message']['content']
+        })
+    else:
+        attachments += response['choices'][0]['message'].get('custom_content', {}).get('attachments', [])
+    attachments += response['choices'][0].get('custom_content', {}).get('attachments', [])
+    for attachment in attachments:
+        if 'image' in attachment.get('type', ''):
+            structured_result['messages'].append({
+                'type': 'image',
+                'content': attachment
+            })
+        if 'text' in attachment.get('type', '') or not attachment.get('type'):
+            content = attachment['title'] + '\n\n' if attachment.get('title') else ''
+            content += attachment['data'] if attachment.get('data') else ''
+            content += '\n\n' + 'Reference URL: ' + attachment['reference_url'] if attachment.get('reference_url') else ''
+            structured_result['messages'].append({
+                'type': 'text',
+                'content': content
+            })
+    return structured_result
 
 
 class RPC:
@@ -76,13 +91,13 @@ class RPC:
             conversation = _prepare_conversation(prompt_struct)
 
             response = openai.ChatCompletion.create(
-                engine=settings.model_name,
+                deployment_id=settings.model_name,
                 temperature=settings.temperature,
                 max_tokens=settings.max_tokens,
                 top_p=settings.top_p,
                 messages=conversation
             )
-            # result = response['choices'][0]['message']['content']
+
             result = _prepare_result(response)
 
         except Exception as e:
