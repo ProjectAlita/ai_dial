@@ -52,11 +52,31 @@ const AiDialIntegrationModal = {
                 <span class="font-h5 font-semibold">Models:</span>
             </div>
             <div class="invalid-feedback d-block">[[ error.models ]]</div>
-            <div>
-                <button class="btn btn btn-painted mr-1 rounded-pill mb-1" v-for="(model, index) in models"
-                    @click="deleteModel(index)">[[ model.id ]]
-                </button>
-            </div>
+            <table class="w-100 table-transparent mb-2 params-table">
+                <tr v-if="models.length > 0">
+                    <th><span class="font-h5 font-semibold">Name</span></th>
+                    <th><span class="font-h5 font-semibold">Completion</span></th>
+                    <th><span class="font-h5 font-semibold">Chat Completion</span></th>
+                    <th><span class="font-h5 font-semibold">Embeddings</span></th>
+                </tr>
+                <tr v-for="(model, index) in models">
+                    <td>
+                        <span class="font-h5">[[ model.id ]]</span>
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="model.capabilities.completion" disabled>
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="model.capabilities.chat_completion" disabled>
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="model.capabilities.embeddings" disabled>
+                    </td>
+                    <td>
+                        <button class="icon__18x18 icon-delete icon__strict-color mr-2" @click="deleteModel(index)"></button>
+                    </td>
+                </tr>
+            </table>
             <ai-dial-models-button
                 ref="AiDialModelsButton"
                 :pluginName="pluginName"
