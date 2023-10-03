@@ -64,7 +64,7 @@ const AiDialModelsButton = {
                         instance_name="capabilities_select"
                         :list_items='["completion", "chat_completion", "embeddings"]'
                         :pre_selected_indexes='[1]'
-                        v-model="capabilities"
+                        v-model:modelValue="capabilities"
                         container_class="metric_select bootstrap-select__b"
                 ></Multiselect-Dropdown>
             </div>

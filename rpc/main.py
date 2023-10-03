@@ -2,7 +2,7 @@ from pydantic import ValidationError
 from pylon.core.tools import web, log  # pylint: disable=E0611,E0401
 
 from tools import rpc_tools, constants
-from ..models.integration_pd import IntegrationModel, AIDialSettings
+from ..models.integration_pd import IntegrationModel, AIDialSettings, AIModel
 from ...integrations.models.pd.integration import SecretField
 
 
@@ -139,6 +139,7 @@ class RPC:
             models = []
         if models:
             models = models.get('data', [])
+            models = [AIModel(**model).dict() for model in models]
         #     _rc = _get_redis_client()
         #     _rc.set(name=payload['name'], value=json.dumps(models))
         #     log.info(f'List of models for {payload["name"]} saved')
