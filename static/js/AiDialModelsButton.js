@@ -58,17 +58,30 @@ const AiDialModelsButton = {
                     :class="{ 'is-invalid': hasErrors }"
             >
             </div>
-            <div class="flex-grow-1 ml-2">
-                <Multiselect-Dropdown
-                        placeholder="Capabilities"
-                        instance_name="capabilities_select"
-                        :list_items='["completion", "chat_completion", "embeddings"]'
-                        :pre_selected_indexes='[1]'
-                        v-model:modelValue="capabilities"
-                        container_class="metric_select bootstrap-select__b"
-                ></Multiselect-Dropdown>
+        </div>
+        <div class="input-group d-flex mt-1">
+            <div class="d-flex">
+                <div>
+                    <div class="font-h6 font-semibold" style="white-space: nowrap">Token limit (max request):</div>
+                    <input type="number" class="form-control mt-1" placeholder="Token limit"
+                        v-model="token_limit"
+                    >
+                </div>
             </div>
-            <button class="btn btn-lg btn-secondary ml-2" type="button"
+            <div class="d-flex flex-grow-1">
+                <div class="flex-grow-1 ml-2">
+                    <div class="font-h6 font-semibold" style="white-space: nowrap">Capabilities:</div>
+                    <Multiselect-Dropdown
+                            placeholder="Capabilities"
+                            instance_name="capabilities_select"
+                            :list_items='["completion", "chat_completion", "embeddings"]'
+                            :pre_selected_indexes='[1]'
+                            v-model:modelValue="capabilities"
+                            container_class="mt-2 metric_select bootstrap-select__b"
+                    ></Multiselect-Dropdown>
+                </div>
+            </div>
+            <button class="btn btn-lg btn-secondary ml-2 mt-3" type="button"
                 @click="handleAdd"
                 :disabled="model === ''"
                 :class="{ 'btn-danger': hasErrors }"
@@ -153,7 +166,8 @@ const AiDialModelsButton = {
                     completion: this.capabilities.includes('completion'),
                     chat_completion: this.capabilities.includes('chat_completion'),
                     embeddings: this.capabilities.includes('embeddings'),
-                }
+                },
+                token_limit: this.token_limit
             }
             this.selected_models = [...this.models, model];
         },
@@ -174,6 +188,7 @@ const AiDialModelsButton = {
             is_models_loaded: false,
             selected_models: [],
             capabilities: [],
+            token_limit: 8096,
             warnings: [],
         })
     }

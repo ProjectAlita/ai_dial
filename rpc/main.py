@@ -1,5 +1,7 @@
+import itertools
 from pydantic import ValidationError
 from pylon.core.tools import web, log  # pylint: disable=E0611,E0401
+import tiktoken
 
 from tools import rpc_tools, constants
 from ..models.integration_pd import IntegrationModel, AIDialSettings, AIModel
@@ -14,28 +16,79 @@ from ...integrations.models.pd.integration import SecretField
 #         )
 
 
-def _prepare_conversation(prompt_struct):
+def num_tokens_from_messages(messages, model):
+    """Return the number of tokens used by a list of messages."""
+    try:
+        encoding = tiktoken.encoding_for_model(model)
+    except KeyError:
+        log.warning(f"Warning: model {model} not found. Using cl100k_base encoding.")
+        encoding = tiktoken.get_encoding("cl100k_base")
+    tokens_per_message = 4  # every message follows <|start|>{role/name}\n{content}<|end|>\n
+    tokens_per_name = -1  # if there's a name, the role is omitted
+    num_tokens = 0
+    for message in messages:
+        num_tokens += tokens_per_message
+        for key, value in message.items():
+            num_tokens += len(encoding.encode(value))
+            if key == "name":
+                num_tokens += tokens_per_name
+    num_tokens += 3  # every reply is primed with <|start|>assistant<|message|>
+    return num_tokens
+
+
+def _prepare_conversation(prompt_struct, model_name, max_response_tokens, token_limit):
     conversation = []
+    context = []
+    examples = []
+    chat_history = []
+    input_ = []
+
     if prompt_struct.get('context'):
-        conversation.append({
+        context.append({
             "role": "system",
             "content": prompt_struct['context']
         })
     if prompt_struct.get('examples'):
         for example in prompt_struct['examples']:
-            conversation.append({
-                "role": "user",
+            examples.append({
+                "role": "system",
+                "name": "example_user",
                 "content": example['input']
             })
-            conversation.append({
-                "role": "assistant",
+            examples.append({
+                "role": "system",
+                "name": "example_assistant",
                 "content": example['output']
             })
+    if prompt_struct.get('chat_history'):
+        for message in prompt_struct['chat_history']:
+            if message['role'] == 'user':
+                chat_history.append({
+                    "role": "user",
+                    "content": message['content']
+                })
+            if message['role'] == 'ai':
+                chat_history.append({
+                    "role": "assistant",
+                    "content": message['content']
+                })
     if prompt_struct.get('prompt'):
-        conversation.append({
+        input_.append({
             "role": "user",
             "content": prompt_struct['prompt']
         })
+
+    conversation = context + examples + chat_history + input_
+
+    conv_history_tokens = num_tokens_from_messages(conversation, model_name)
+
+    while conv_history_tokens + max_response_tokens >= token_limit:
+        if chat_history:
+            del chat_history[0]
+        elif examples:
+            del examples[0:2]
+        conversation = context + examples + chat_history + input_
+        conv_history_tokens = num_tokens_from_messages(conversation, model_name)
 
     return conversation
 
@@ -88,7 +141,9 @@ class RPC:
             openai.api_base = settings.api_base
             openai.api_version = settings.api_version
 
-            conversation = _prepare_conversation(prompt_struct)
+            token_limit = settings.token_limit
+            conversation = _prepare_conversation(
+                prompt_struct, settings.model_name, settings.max_tokens, token_limit)
 
             response = openai.ChatCompletion.create(
                 deployment_id=settings.model_name,

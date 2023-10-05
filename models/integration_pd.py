@@ -56,6 +56,10 @@ class IntegrationModel(BaseModel):
             values['models'] = [AIModel(id=model, name=model).dict(by_alias=True) for model in models]
         return values
 
+    @property
+    def token_limit(self):
+        return next((model.token_limit for model in self.models if model.id == self.model_name), 8096)
+
     def check_connection(self):
         import openai
         from tools import session_project
