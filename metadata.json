@@ -3,6 +3,6 @@
   "version": "0.1",
   "module": "plugins.ai_dial",
   "extract": false,
-  "depends_on": ["integrations"],
+  "depends_on": ["integrations", "secrets"],
   "init_after": []
 }

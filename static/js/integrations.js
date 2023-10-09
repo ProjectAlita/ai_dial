@@ -55,9 +55,10 @@ const AiDialIntegrationModal = {
             <table class="w-100 table-transparent mb-2 params-table">
                 <tr v-if="models.length > 0">
                     <th><span class="font-h5 font-semibold">Name</span></th>
-                    <th><span class="font-h5 font-semibold">Completion</span></th>
-                    <th><span class="font-h5 font-semibold">Chat Completion</span></th>
+                    <th><span class="font-h5 font-semibold">Text</span></th>
+                    <th><span class="font-h5 font-semibold">Chat</span></th>
                     <th><span class="font-h5 font-semibold">Embeddings</span></th>
+                    <th><span class="font-h5 font-semibold">Tokens</span></th>
                 </tr>
                 <tr v-for="(model, index) in models">
                     <td>
@@ -71,6 +72,9 @@ const AiDialIntegrationModal = {
                     </td>
                     <td>
                         <input type="checkbox" v-model="model.capabilities.embeddings" disabled>
+                    </td>
+                    <td>
+                        <span class="font-h5">[[ model.token_limit ]]</span>
                     </td>
                     <td>
                         <button class="icon__18x18 icon-delete icon__strict-color mr-2" @click="deleteModel(index)"></button>
