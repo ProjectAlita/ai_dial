@@ -213,8 +213,6 @@ class RPC:
             conversation = prepare_conversation(
                 prompt_struct, settings.model_name, settings.max_tokens, token_limit)
 
-            log.info(f'{conversation=}')
-
             response = openai.ChatCompletion.create(
                 deployment_id=settings.model_name,
                 temperature=settings.temperature,
