@@ -60,6 +60,9 @@ class IntegrationModel(BaseModel):
     def token_limit(self):
         return next((model.token_limit for model in self.models if model.id == self.model_name), 8096)
 
+    def get_token_limit(self, model_name):
+        return next((model.token_limit for model in self.models if model.id == model_name), 8096)
+
     def check_connection(self):
         import openai
         from tools import session_project
