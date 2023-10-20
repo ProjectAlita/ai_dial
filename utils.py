@@ -122,15 +122,16 @@ def prepare_conversation(
     if prompt_struct.get('examples'):
         for example in prompt_struct['examples']:
             conversation['examples'].append({
-                "role": "system",
+                "role": "user",
                 "name": "example_user",
                 "content": example['input']
             })
-            conversation['examples'].append({
-                "role": "system",
-                "name": "example_assistant",
-                "content": example['output']
-            })
+            if example.get("output", None):
+                conversation['examples'].append({
+                    "role": "assistant",
+                    "name": "example_assistant",
+                    "content": example['output']
+                })
     if prompt_struct.get('chat_history'):
         for message in prompt_struct['chat_history']:
             conversation['chat_history'].append({
