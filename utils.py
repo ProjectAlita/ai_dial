@@ -1,4 +1,5 @@
 from collections import deque
+from openai import ChatCompletion
 import tiktoken
 from .models.integration_pd import IntegrationModel
 from .models.request_body import ChatCompletionRequestBody
@@ -6,14 +7,23 @@ from .models.request_body import ChatCompletionRequestBody
 from pylon.core.tools import log
 
 
+# def init_openai(settings, project_id):
+#     import openai
+#     api_key = settings.api_token.unsecret(project_id)
+#     openai.api_key = api_key
+#     openai.api_type = settings.api_type
+#     openai.api_version = settings.api_version
+#     openai.api_base = settings.api_base
+#     return openai
+
+
 def init_openai(settings, project_id):
-    import openai
-    api_key = settings.api_token.unsecret(project_id)
-    openai.api_key = api_key
-    openai.api_type = settings.api_type
-    openai.api_version = settings.api_version
-    openai.api_base = settings.api_base
-    return openai
+    return {
+        'api_key': settings.api_token.unsecret(project_id),
+        'api_type': settings.api_type,
+        'api_version': settings.api_version,
+        'api_base': settings.api_base
+    }
 
 
 def num_tokens_from_messages(messages: list, model: str) -> int:
@@ -214,18 +224,20 @@ def prepare_result(response):
 
 def predict_chat(project_id: int, settings: dict, prompt_struct: dict) -> str:
     settings = IntegrationModel.parse_obj(settings)
-    openai = init_openai(settings, project_id)
+    # openai = init_openai(settings, project_id)
+    init_settings = init_openai(settings, project_id)
 
     token_limit = settings.token_limit
     conversation = prepare_conversation(
         prompt_struct, settings.model_name, settings.max_tokens, token_limit)
 
-    response = openai.ChatCompletion.create(
+    response = ChatCompletion.create(
         deployment_id=settings.model_name,
         temperature=settings.temperature,
         max_tokens=settings.max_tokens,
         top_p=settings.top_p,
-        messages=conversation
+        messages=conversation,
+        **init_settings
     )
     return prepare_result(response)
 
@@ -233,7 +245,8 @@ def predict_chat(project_id: int, settings: dict, prompt_struct: dict) -> str:
 def predict_chat_from_request(project_id: int, settings: dict, request_data: dict) -> str:
     params = ChatCompletionRequestBody.validate(request_data).dict(exclude_unset=True)
     settings = IntegrationModel.parse_obj(settings)
-    openai = init_openai(settings, project_id)
+    # openai = init_openai(settings, project_id)
+    init_settings = init_openai(settings, project_id)
 
     token_limit = settings.get_token_limit(params['deployment_id'])
     max_tokens = params.get('max_tokens', 0)
@@ -242,4 +255,4 @@ def predict_chat_from_request(project_id: int, settings: dict, request_data: dic
             params['messages'], params['deployment_id'], max_tokens, token_limit
             )
 
-    return openai.ChatCompletion.create(**params)
+    return ChatCompletion.create(**params, **init_settings)
