@@ -240,7 +240,12 @@ def predict_chat(project_id: int, settings: dict, prompt_struct: dict, format_re
 
     token_limit = settings.token_limit
     conversation = prepare_conversation(
-        prompt_struct, settings.model_name, settings.max_tokens, token_limit)
+        prompt_struct, settings.model_name, settings.max_tokens, token_limit
+    )
+
+    addons = prompt_struct.pop('addons', None)
+    if addons:
+        init_settings['addons'] = addons
 
     response = ChatCompletion.create(
         deployment_id=settings.model_name,
