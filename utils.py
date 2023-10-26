@@ -42,7 +42,7 @@ def num_tokens_from_messages(messages: list, model: str) -> int:
         "gpt-4-32k-0314",
         "gpt-4-0613",
         "gpt-4-32k-0613",
-        }:
+    }:
         tokens_per_message = 3
         tokens_per_name = 1
     elif model == "gpt-3.5-turbo-0301":
@@ -70,53 +70,53 @@ def num_tokens_from_messages(messages: list, model: str) -> int:
 
 def limit_conversation(
         conversation: dict, model_name: str, max_response_tokens: int, token_limit: int
-        ) -> list:
-        limited_conversation = []
-        remaining_tokens = token_limit - max_response_tokens
-        remaining_tokens -= 3  # every reply is primed with <|start|>assistant<|message|>
+) -> list:
+    limited_conversation = []
+    remaining_tokens = token_limit - max_response_tokens
+    remaining_tokens -= 3  # every reply is primed with <|start|>assistant<|message|>
 
-        context_tokens = num_tokens_from_messages(conversation['context'], model_name)
-        remaining_tokens -= context_tokens
+    context_tokens = num_tokens_from_messages(conversation['context'], model_name)
+    remaining_tokens -= context_tokens
 
-        if remaining_tokens < 0:
-            return limited_conversation
-
-        limited_conversation.extend(conversation['context'])
-
-        input_tokens = num_tokens_from_messages(conversation['input'], model_name)
-        remaining_tokens -= input_tokens
-        if remaining_tokens < 0:
-            return limited_conversation
-
-        final_examples = []
-        for example in conversation['examples']:
-            example_tokens = num_tokens_from_messages([example], model_name)
-            remaining_tokens -= example_tokens
-            if remaining_tokens < 0:
-                if len(final_examples) % 2:
-                    final_examples.pop()  # remove incomplete example if present
-                return limited_conversation + final_examples + conversation['input']
-            final_examples.append(example)
-
-        limited_conversation.extend(final_examples)
-
-        final_history = deque()
-        for message in reversed(conversation['chat_history']):
-            message_tokens = num_tokens_from_messages([message], model_name)
-            remaining_tokens -= message_tokens
-            if remaining_tokens < 0:
-                return limited_conversation + list(final_history) + conversation['input']
-            final_history.appendleft(message)
-        limited_conversation.extend(final_history)
-
-        limited_conversation.extend(conversation['input'])
+    if remaining_tokens < 0:
         return limited_conversation
+
+    limited_conversation.extend(conversation['context'])
+
+    input_tokens = num_tokens_from_messages(conversation['input'], model_name)
+    remaining_tokens -= input_tokens
+    if remaining_tokens < 0:
+        return limited_conversation
+
+    final_examples = []
+    for example in conversation['examples']:
+        example_tokens = num_tokens_from_messages([example], model_name)
+        remaining_tokens -= example_tokens
+        if remaining_tokens < 0:
+            if len(final_examples) % 2:
+                final_examples.pop()  # remove incomplete example if present
+            return limited_conversation + final_examples + conversation['input']
+        final_examples.append(example)
+
+    limited_conversation.extend(final_examples)
+
+    final_history = deque()
+    for message in reversed(conversation['chat_history']):
+        message_tokens = num_tokens_from_messages([message], model_name)
+        remaining_tokens -= message_tokens
+        if remaining_tokens < 0:
+            return limited_conversation + list(final_history) + conversation['input']
+        final_history.appendleft(message)
+    limited_conversation.extend(final_history)
+
+    limited_conversation.extend(conversation['input'])
+    return limited_conversation
 
 
 def prepare_conversation(
         prompt_struct: dict, model_name: str, max_response_tokens: int, token_limit: int,
         check_limits: bool = True
-        ) -> list:
+) -> list:
     conversation = {
         'context': [],
         'examples': [],
@@ -194,32 +194,43 @@ def limit_messages(messages: list, model_name: str, max_response_tokens: int, to
     return limit_conversation(conversation, model_name, max_response_tokens, token_limit)
 
 
-def prepare_result(response):
-    structured_result = {'messages': []}
-    attachments = []
-    if response['choices'][0]['message'].get('content'):
-        structured_result['messages'].append({
+def prepare_result(response: dict) -> dict:
+    messages = []
+    attachments = response['choices'][0].get('custom_content', {}).get('attachments', [])
+
+    response_message: dict = response['choices'][0]['message']
+
+    custom_content = response_message.get('custom_content', {})
+    if custom_content.get('state'):
+        messages.append({
+            'type': 'state',
+            'content': custom_content['state']
+        })
+
+    if response_message.get('content'):
+        messages.append({
             'type': 'text',
-            'content': response['choices'][0]['message']['content']
+            'content': response_message['content']
         })
     else:
-        attachments += response['choices'][0]['message'].get('custom_content', {}).get('attachments', [])
-    attachments += response['choices'][0].get('custom_content', {}).get('attachments', [])
+        attachments += custom_content.get('attachments', [])
+
     for attachment in attachments:
         if 'image' in attachment.get('type', ''):
-            structured_result['messages'].append({
+            messages.append({
                 'type': 'image',
                 'content': attachment
             })
         if 'text' in attachment.get('type', '') or not attachment.get('type'):
             content = attachment['title'] + '\n\n' if attachment.get('title') else ''
             content += attachment['data'] if attachment.get('data') else ''
-            content += '\n\n' + 'Reference URL: ' + attachment['reference_url'] if attachment.get('reference_url') else ''
-            structured_result['messages'].append({
+            content += '\n\n' + 'Reference URL: ' + attachment['reference_url'] if attachment.get(
+                'reference_url') else ''
+            messages.append({
                 'type': 'text',
                 'content': content
             })
-    return structured_result
+    return {'messages': messages}
 
 
 def predict_chat(project_id: int, settings: dict, prompt_struct: dict, format_response: bool = True, **kwargs) -> dict:
@@ -255,6 +266,6 @@ def predict_chat_from_request(project_id: int, settings: dict, request_data: dic
     if params.get('messages'):
         params['messages'] = limit_messages(
             params['messages'], params['deployment_id'], max_tokens, token_limit
-            )
+        )
 
     return ChatCompletion.create(**params, **init_settings)
