@@ -22,10 +22,14 @@ class RPC:
 
     @web.rpc(f'{integration_name}__predict')
     @rpc_tools.wrap_exceptions(RuntimeError)
-    def predict(self, project_id, settings, prompt_struct):
+    def predict(self, project_id, settings, prompt_struct, format_response: bool = True, **kwargs):
         """ Predict function """
         try:
-            result = predict_chat(project_id, settings, prompt_struct)
+            result = predict_chat(
+                project_id, settings, prompt_struct,
+                format_response=format_response,
+                **kwargs
+            )
         except Exception as e:
             log.error(format_exc())
             return {"ok": False, "error": f"{type(e)}: {str(e)}"}

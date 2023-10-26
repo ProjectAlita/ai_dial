@@ -222,7 +222,7 @@ def prepare_result(response):
     return structured_result
 
 
-def predict_chat(project_id: int, settings: dict, prompt_struct: dict) -> str:
+def predict_chat(project_id: int, settings: dict, prompt_struct: dict, format_response: bool = True, **kwargs) -> dict:
     settings = IntegrationModel.parse_obj(settings)
     # openai = init_openai(settings, project_id)
     init_settings = init_openai(settings, project_id)
@@ -239,7 +239,9 @@ def predict_chat(project_id: int, settings: dict, prompt_struct: dict) -> str:
         messages=conversation,
         **init_settings
     )
-    return prepare_result(response)
+    if format_response:
+        return prepare_result(response)
+    return dict(response)
 
 
 def predict_chat_from_request(project_id: int, settings: dict, request_data: dict) -> str:
