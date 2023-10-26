@@ -61,9 +61,10 @@ def num_tokens_from_messages(messages: list, model: str) -> int:
     for message in messages:
         num_tokens += tokens_per_message
         for key, value in message.items():
-            num_tokens += len(encoding.encode(value))
-            if key == "name":
-                num_tokens += tokens_per_name
+            if key != "custom_content":
+                num_tokens += len(encoding.encode(value))
+                if key == "name":
+                    num_tokens += tokens_per_name
     # num_tokens += 3  # every reply is primed with <|start|>assistant<|message|>
     return num_tokens
 
@@ -144,10 +145,16 @@ def prepare_conversation(
                 })
     if prompt_struct.get('chat_history'):
         for message in prompt_struct['chat_history']:
-            conversation['chat_history'].append({
+            formatted_message = {
                 "role": "user" if message['role'] == 'user' else "assistant",
                 "content": message['content']
-            })
+            }
+            if 'custom_content' in message:
+                formatted_message['custom_content'] = message['custom_content']
+            # if 'name' in message:
+            #     formatted_message['name'] = message['name']
+            conversation['chat_history'].append(formatted_message)
+
     if prompt_struct.get('prompt'):
         conversation['input'].append({
             "role": "user",
