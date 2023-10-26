@@ -203,24 +203,24 @@ def limit_messages(messages: list, model_name: str, max_response_tokens: int, to
 
 def prepare_result(response: dict) -> dict:
     messages = []
-    attachments = response['choices'][0].get('custom_content', {}).get('attachments', [])
-
     response_message: dict = response['choices'][0]['message']
 
     custom_content = response_message.get('custom_content', {})
-    if custom_content.get('state'):
+    attachments = [
+        *response['choices'][0].get('custom_content', {}).get('attachments', []),
+        *custom_content.get('attachments', [])
+    ]
+    if 'state' in custom_content:
         messages.append({
             'type': 'state',
             'content': custom_content['state']
         })
 
-    if response_message.get('content'):
+    if 'content' in response_message:
         messages.append({
             'type': 'text',
             'content': response_message['content']
         })
-    else:
-        attachments += custom_content.get('attachments', [])
 
     for attachment in attachments:
         if 'image' in attachment.get('type', ''):
