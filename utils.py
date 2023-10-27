@@ -80,7 +80,10 @@ def limit_conversation(
     remaining_tokens -= context_tokens
 
     if remaining_tokens < 0:
-        return limited_conversation
+        raise Exception(
+'There are no enough tokens to form messages for ChatCompletion. \
+Try using a lower value for the token limit parameter.'
+)
 
     limited_conversation.extend(conversation['context'])
 
