@@ -94,23 +94,29 @@ Try using a lower value for the token limit parameter.'
 
     final_examples = []
     for example in conversation['examples']:
-        example_tokens = num_tokens_from_messages([example], model_name)
-        remaining_tokens -= example_tokens
-        if remaining_tokens < 0:
-            if len(final_examples) % 2:
-                final_examples.pop()  # remove incomplete example if present
-            return limited_conversation + final_examples + conversation['input']
-        final_examples.append(example)
+        try:
+            example_tokens = num_tokens_from_messages([example], model_name)
+            remaining_tokens -= example_tokens
+            if remaining_tokens < 0:
+                if len(final_examples) % 2:
+                    final_examples.pop()  # remove incomplete example if present
+                return limited_conversation + final_examples + conversation['input']
+            final_examples.append(example)
+        except TypeError:
+            ...
 
     limited_conversation.extend(final_examples)
 
     final_history = deque()
     for message in reversed(conversation['chat_history']):
-        message_tokens = num_tokens_from_messages([message], model_name)
-        remaining_tokens -= message_tokens
-        if remaining_tokens < 0:
-            return limited_conversation + list(final_history) + conversation['input']
-        final_history.appendleft(message)
+        try:
+            message_tokens = num_tokens_from_messages([message], model_name)
+            remaining_tokens -= message_tokens
+            if remaining_tokens < 0:
+                return limited_conversation + list(final_history) + conversation['input']
+            final_history.appendleft(message)
+        except TypeError:
+            ...
     limited_conversation.extend(final_history)
 
     limited_conversation.extend(conversation['input'])
