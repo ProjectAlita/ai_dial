@@ -81,9 +81,9 @@ def limit_conversation(
 
     if remaining_tokens < 0:
         raise Exception(
-'There are no enough tokens to form messages for ChatCompletion. \
-Try using a lower value for the token limit parameter.'
-)
+            'There are no enough tokens to form messages for ChatCompletion. \
+            Try using a lower value for the token limit parameter.'
+        )
 
     limited_conversation.extend(conversation['context'])
 
@@ -123,7 +123,7 @@ Try using a lower value for the token limit parameter.'
     return limited_conversation
 
 
-def prepare_conversation(
+def prepare_conversation_old(
         prompt_struct: dict, model_name: str, max_response_tokens: int, token_limit: int,
         check_limits: bool = True
 ) -> list:
@@ -249,19 +249,29 @@ def prepare_result(response: dict) -> dict:
     return {'messages': messages}
 
 
-def predict_chat(project_id: int, settings: dict, prompt_struct: dict, format_response: bool = True, **kwargs) -> dict:
+def predict_chat(
+        project_id: int, settings: dict,
+        prompt_struct: dict | list, format_response: bool = True,
+        from_legacy_api: bool = True, **kwargs
+) -> dict:
     settings = IntegrationModel.parse_obj(settings)
     # openai = init_openai(settings, project_id)
     init_settings = init_openai(settings, project_id)
 
     token_limit = settings.token_limit
-    conversation = prepare_conversation(
-        prompt_struct, settings.model_name, settings.max_tokens, token_limit
-    )
 
-    addons = prompt_struct.pop('addons', None)
-    if addons:
-        init_settings['addons'] = addons
+    if from_legacy_api:
+        conversation = prepare_conversation_old(
+            prompt_struct, settings.model_name, settings.max_tokens, token_limit
+        )
+    else:
+        conversation = limit_messages(
+            prompt_struct, settings.model_name, settings.max_tokens, token_limit
+        )
+
+    # addons = prompt_struct.pop('addons', None)
+    # if addons:
+    #     init_settings['addons'] = addons
 
     response = ChatCompletion.create(
         deployment_id=settings.model_name,
