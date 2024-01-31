@@ -32,7 +32,7 @@ class API(api_tools.APIBase):
         except ValidationError as e:
             return e.errors(), 400
 
-        check_connection_response = settings.check_connection()
+        check_connection_response = settings.check_connection(project_id)
         if check_connection_response is not True:
             return [{'loc': ['check_connection'], 'msg': check_connection_response}], 400
 
