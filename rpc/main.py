@@ -84,11 +84,12 @@ class RPC:
                 )
         except Exception as e:
             try:
-                from openai import OpenAI
-                client = OpenAI(
-                    api_key=api_key,
+                from openai import AzureOpenAI
+                client = AzureOpenAI(
                     base_url=api_base,
-                    # api_type and api_version are removed in openai >= 1.0.0
+                    api_version=api_version,
+                    api_key=api_key,
+                    # api_type is removed in openai >= 1.0.0
                 )
                 models = client.models.list()
             except Exception as e:
