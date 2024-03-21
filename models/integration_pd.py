@@ -64,7 +64,6 @@ class IntegrationModel(BaseModel):
         return next((model.token_limit for model in self.models if model.id == model_name), 8096)
 
     def check_connection(self, project_id=None):
-        from openai import Model
         from tools import session_project
         if not project_id:
             project_id = session_project.get()
@@ -73,12 +72,22 @@ class IntegrationModel(BaseModel):
         api_version = self.api_version
         api_base = self.api_base
         try:
+            from openai import Model
             Model.list(
                 api_key=api_key, api_base=api_base, api_type=api_type, api_version=api_version
                 )
         except Exception as e:
-            log.error(e)
-            return str(e)
+            try:
+                from openai import OpenAI
+                client = OpenAI(
+                    api_key=api_key,
+                    base_url=api_base,
+                    # api_type and api_version are removed in openai >= 1.0.0
+                )
+                client.models.list()
+            except Exception as e:
+                log.error(e)
+                return str(e)
         return True
 
     def refresh_models(self, project_id):

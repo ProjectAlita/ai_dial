@@ -99,7 +99,8 @@ class RPC:
                 models = models.get('data', [])
                 models = [AIModel(**model).dict() for model in models]
             except:
-                log.info("Model: %s", model)
+                log.info("Models: %s", models)
+                log.info("Model[0]: %s", models[0])
                 models = [AIModel(id=model.id, name=model.id).dict() for model in models]
         #     _rc = _get_redis_client()
         #     _rc.set(name=payload['name'], value=json.dumps(models))
