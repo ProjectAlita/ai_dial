@@ -108,13 +108,13 @@ class RPC:
                     model_name = model.model
                     #
                     model_capabilities = {
-                        "completion": model.capabilities.completion,
-                        "chat_completion": model.capabilities.chat_completion,
-                        "embeddings": model.capabilities.embeddings,
+                        "completion": model.capabilities["completion"],
+                        "chat_completion": model.capabilities["chat_completion"],
+                        "embeddings": model.capabilities["embeddings"],
                     }
                     #
                     try:
-                        model_token_limit = model.limits.max_total_tokens
+                        model_token_limit = model.limits["max_total_tokens"]
                     except:  # pylint: disable=W0702
                         model_token_limit = None
                     #
