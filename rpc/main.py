@@ -110,7 +110,10 @@ class RPC:
                     #
                     for model in client_models:
                         model_id = model.id
-                        model_name = model.model
+                        try:
+                            model_name = model.model
+                        except:
+                            model_name = model.id
                         #
                         model_capabilities = {
                             "completion": model.capabilities["completion"],
