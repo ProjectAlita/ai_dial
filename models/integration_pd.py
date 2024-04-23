@@ -72,17 +72,19 @@ class IntegrationModel(BaseModel):
         api_version = self.api_version
         api_base = self.api_base
         try:
+            # openai < 1.0.0
             from openai import Model
             Model.list(
                 api_key=api_key, api_base=api_base, api_type=api_type, api_version=api_version
                 )
         except Exception as e:
+            # openai >= 1.0.0
             try:
                 from openai import AzureOpenAI
                 client = AzureOpenAI(
                     base_url=api_base,
-                    api_key=api_key,
                     api_version=api_version,
+                    api_key=api_key,
                     # api_type is removed in openai >= 1.0.0
                 )
                 client.models.list()

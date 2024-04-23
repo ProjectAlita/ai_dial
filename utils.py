@@ -1,3 +1,5 @@
+# FIXME: ChatCompletion is not adapted for openai > 1.0.0
+
 from collections import deque
 from openai import ChatCompletion
 import tiktoken
