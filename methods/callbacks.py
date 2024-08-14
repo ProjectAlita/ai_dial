@@ -356,12 +356,20 @@ class Method:  # pylint: disable=E1101,R0903,W0201
             self, settings, texts,
         ):
         """ Make embeddings """
+        api_token = settings["integration_data"]["settings"]["api_token"]
+        #
+        if not isinstance(api_token, str):
+            try:
+                api_token = api_token.unsecret(settings["integration_data"]["project_id"])
+            except (AttributeError, KeyError):
+                api_token = api_token.unsecret(None)
+        #
         target_kwargs = {
             "model": settings["model_name"],
             #
             "azure_endpoint": settings["integration_data"]["settings"]["api_base"],
             "api_version": settings["integration_data"]["settings"]["api_version"],
-            "api_key": settings["integration_data"]["settings"]["api_token"],
+            "api_key": api_token,
         }
         #
         result = {
@@ -391,12 +399,20 @@ class Method:  # pylint: disable=E1101,R0903,W0201
             self, settings, text,
         ):
         """ Make embedding """
+        api_token = settings["integration_data"]["settings"]["api_token"]
+        #
+        if not isinstance(api_token, str):
+            try:
+                api_token = api_token.unsecret(settings["integration_data"]["project_id"])
+            except (AttributeError, KeyError):
+                api_token = api_token.unsecret(None)
+        #
         target_kwargs = {
             "model": settings["model_name"],
             #
             "azure_endpoint": settings["integration_data"]["settings"]["api_base"],
             "api_version": settings["integration_data"]["settings"]["api_version"],
-            "api_key": settings["integration_data"]["settings"]["api_token"],
+            "api_key": api_token,
         }
         #
         result = {
@@ -441,10 +457,18 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         if model_info is None:
             raise RuntimeError(f"No model info found: {model}")
         #
+        api_token = settings["settings"]["api_token"]
+        #
+        if not isinstance(api_token, str):
+            try:
+                api_token = api_token.unsecret(settings["project_id"])
+            except (AttributeError, KeyError):
+                api_token = api_token.unsecret(None)
+        #
         auth_kwargs = {
             "azure_endpoint": settings["settings"]["api_base"],
             "api_version": settings["settings"]["api_version"],
-            "api_key": settings["settings"]["api_token"],
+            "api_key": api_token,
         }
         #
         if model_info["capabilities"]["embeddings"]:
