@@ -5,7 +5,7 @@ from typing import List, Optional
 from pylon.core.tools import log
 from ...integrations.models.pd.integration import SecretField
 
-from tools import rpc_tools, VaultClient
+from tools import rpc_tools, VaultClient, worker_client, this
 
 
 def get_token_limits():
@@ -64,34 +64,17 @@ class IntegrationModel(BaseModel):
         return next((model.token_limit for model in self.models if model.id == model_name), 8096)
 
     def check_connection(self, project_id=None):
-        from tools import session_project
         if not project_id:
+            from tools import session_project
             project_id = session_project.get()
-        api_key = self.api_token.unsecret(project_id)
-        api_type = self.api_type
-        api_version = self.api_version
-        api_base = self.api_base
-        try:
-            # openai < 1.0.0
-            from openai import Model
-            Model.list(
-                api_key=api_key, api_base=api_base, api_type=api_type, api_version=api_version
-                )
-        except Exception as e:
-            # openai >= 1.0.0
-            try:
-                from openai import AzureOpenAI
-                client = AzureOpenAI(
-                    base_url=api_base,
-                    api_version=api_version,
-                    api_key=api_key,
-                    # api_type is removed in openai >= 1.0.0
-                )
-                client.models.list()
-            except Exception as e:
-                log.error(e)
-                return str(e)
-        return True
+        #
+        settings = self.dict()
+        settings["api_token"] = self.api_token.unsecret(project_id)
+        #
+        return worker_client.ai_check_settings(
+            integration_name=this.module_name,
+            settings=settings,
+        )
 
     def refresh_models(self, project_id):
         integration_name = 'ai_dial'

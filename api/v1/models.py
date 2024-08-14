@@ -18,7 +18,9 @@ class AdminAPI(api_tools.APIModeHandler):
 class API(api_tools.APIBase):
     url_params = [
         '<string:mode>/<int:project_id>',
-        '<int:project_id>'
+        '<string:mode>/<string:project_id>',
+        '<int:project_id>',
+        '<string:project_id>',
     ]
 
     mode_handlers = {
@@ -27,6 +29,11 @@ class API(api_tools.APIBase):
     }
 
     def post(self, project_id, **kwargs):
+        try:
+            project_id = int(project_id)
+        except:  # pylint: disable=W0702
+            project_id = None
+
         try:
             settings = IntegrationModel.parse_obj(request.json)
         except ValidationError as e:
