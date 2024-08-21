@@ -487,8 +487,8 @@ class Method:  # pylint: disable=E1101,R0903,W0201
                 "ai_model_params": {
                     "model": model,
                     #
-                    # "temperature": settings["settings"]["temperature"],
-                    # "max_tokens": settings["settings"]["max_tokens"],
+                    "temperature": settings["settings"]["temperature"],
+                    "max_tokens": settings["settings"]["max_tokens"],
                     #
                     **auth_kwargs,
                 },
@@ -499,8 +499,8 @@ class Method:  # pylint: disable=E1101,R0903,W0201
             "ai_model_params": {
                 "model": model,
                 #
-                # "temperature": settings["settings"]["temperature"],
-                # "max_tokens": settings["settings"]["max_tokens"],
+                "temperature": settings["settings"]["temperature"],
+                "max_tokens": settings["settings"]["max_tokens"],
                 #
                 **auth_kwargs,
             },
