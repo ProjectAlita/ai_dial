@@ -45,8 +45,6 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Check integration settings/test connection """
         #
-        log.debug(f"{__name__}: {settings=}")
-        #
         settings = json.loads(json.dumps(settings))
         #
         target_kwargs = {
@@ -81,8 +79,6 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Get model list """
         #
-        log.debug(f"{__name__}: {settings=}")
-        #
         settings = json.loads(json.dumps(settings))
         #
         target_kwargs = {
@@ -116,9 +112,6 @@ class Method:  # pylint: disable=E1101,R0903,W0201
             self, settings, data,
         ):
         """ Count input/output/data tokens """
-        #
-        log.debug(f"{__name__}: {settings=}")
-        log.debug(f"{__name__}: {settings.merged_settings=}")
         #
         api_token = SecretField.parse_obj(settings.merged_settings["api_token"])
         try:
@@ -187,9 +180,6 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Call model """
         #
-        log.debug(f"{__name__}: {settings=}")
-        log.debug(f"{__name__}: {settings.merged_settings=}")
-        #
         api_token = SecretField.parse_obj(settings.merged_settings["api_token"])
         try:
             api_token = api_token.unsecret(settings.integration.project_id)
@@ -239,9 +229,6 @@ class Method:  # pylint: disable=E1101,R0903,W0201
             self, settings, text, stream_id,
         ):
         """ Stream model """
-        #
-        log.debug(f"{__name__}: {settings=}")
-        log.debug(f"{__name__}: {settings.merged_settings=}")
         #
         api_token = SecretField.parse_obj(settings.merged_settings["api_token"])
         try:
@@ -300,9 +287,6 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Call model """
         #
-        log.debug(f"{__name__}: {settings=}")
-        log.debug(f"{__name__}: {settings.merged_settings=}")
-        #
         api_token = SecretField.parse_obj(settings.merged_settings["api_token"])
         try:
             api_token = api_token.unsecret(settings.integration.project_id)
@@ -352,9 +336,6 @@ class Method:  # pylint: disable=E1101,R0903,W0201
             self, settings, messages, stream_id,
         ):
         """ Stream model """
-        #
-        log.debug(f"{__name__}: {settings=}")
-        log.debug(f"{__name__}: {settings.merged_settings=}")
         #
         api_token = SecretField.parse_obj(settings.merged_settings["api_token"])
         try:
@@ -413,8 +394,6 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Make embeddings """
         #
-        log.debug(f"{__name__}: {settings=}")
-        #
         api_token = settings["integration_data"]["settings"]["api_token"]
         #
         if not isinstance(api_token, str):
@@ -458,8 +437,6 @@ class Method:  # pylint: disable=E1101,R0903,W0201
             self, settings, text,
         ):
         """ Make embedding """
-        #
-        log.debug(f"{__name__}: {settings=}")
         #
         api_token = settings["integration_data"]["settings"]["api_token"]
         #
@@ -508,8 +485,6 @@ class Method:  # pylint: disable=E1101,R0903,W0201
             self, settings, model,
         ):
         """ Make indexer config """
-        #
-        log.debug(f"{__name__}: {settings=}")
         #
         model_info = None
         #
