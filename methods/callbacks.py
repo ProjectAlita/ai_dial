@@ -45,7 +45,7 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Check integration settings/test connection """
         #
-        log.debug(f"{settings=}")
+        log.debug(f"{__name__}: {settings=}")
         #
         settings = json.loads(json.dumps(settings))
         #
@@ -81,7 +81,7 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Get model list """
         #
-        log.debug(f"{settings=}")
+        log.debug(f"{__name__}: {settings=}")
         #
         settings = json.loads(json.dumps(settings))
         #
@@ -117,8 +117,8 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Count input/output/data tokens """
         #
-        log.debug(f"{settings=}")
-        log.debug(f"{settings.merged_settings=}")
+        log.debug(f"{__name__}: {settings=}")
+        log.debug(f"{__name__}: {settings.merged_settings=}")
         #
         api_token = SecretField.parse_obj(settings.merged_settings["api_token"])
         try:
@@ -126,10 +126,16 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         except AttributeError:
             api_token = api_token.unsecret(None)
         #
+        model_parameters = {}
+        #
+        for param in ["max_tokens", "temperature", "top_p", "top_k"]:
+            if param in settings.merged_settings:
+                model_parameters[param] = settings.merged_settings[param]
+        #
         target_kwargs = {
             "model": settings.merged_settings["model_name"],
-            "temperature": settings.merged_settings["temperature"],
-            "max_tokens": settings.merged_settings["max_tokens"],
+            #
+            **model_parameters,
             #
             "azure_endpoint": settings.merged_settings["api_base"],
             "api_version": settings.merged_settings["api_version"],
@@ -181,8 +187,8 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Call model """
         #
-        log.debug(f"{settings=}")
-        log.debug(f"{settings.merged_settings=}")
+        log.debug(f"{__name__}: {settings=}")
+        log.debug(f"{__name__}: {settings.merged_settings=}")
         #
         api_token = SecretField.parse_obj(settings.merged_settings["api_token"])
         try:
@@ -190,10 +196,16 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         except AttributeError:
             api_token = api_token.unsecret(None)
         #
+        model_parameters = {}
+        #
+        for param in ["max_tokens", "temperature", "top_p", "top_k"]:
+            if param in settings.merged_settings:
+                model_parameters[param] = settings.merged_settings[param]
+        #
         target_kwargs = {
             "model": settings.merged_settings["model_name"],
-            "temperature": settings.merged_settings["temperature"],
-            "max_tokens": settings.merged_settings["max_tokens"],
+            #
+            **model_parameters,
             #
             "azure_endpoint": settings.merged_settings["api_base"],
             "api_version": settings.merged_settings["api_version"],
@@ -228,8 +240,8 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Stream model """
         #
-        log.debug(f"{settings=}")
-        log.debug(f"{settings.merged_settings=}")
+        log.debug(f"{__name__}: {settings=}")
+        log.debug(f"{__name__}: {settings.merged_settings=}")
         #
         api_token = SecretField.parse_obj(settings.merged_settings["api_token"])
         try:
@@ -237,10 +249,16 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         except AttributeError:
             api_token = api_token.unsecret(None)
         #
+        model_parameters = {}
+        #
+        for param in ["max_tokens", "temperature", "top_p", "top_k"]:
+            if param in settings.merged_settings:
+                model_parameters[param] = settings.merged_settings[param]
+        #
         target_kwargs = {
             "model": settings.merged_settings["model_name"],
-            "temperature": settings.merged_settings["temperature"],
-            "max_tokens": settings.merged_settings["max_tokens"],
+            #
+            **model_parameters,
             #
             "azure_endpoint": settings.merged_settings["api_base"],
             "api_version": settings.merged_settings["api_version"],
@@ -282,8 +300,8 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Call model """
         #
-        log.debug(f"{settings=}")
-        log.debug(f"{settings.merged_settings=}")
+        log.debug(f"{__name__}: {settings=}")
+        log.debug(f"{__name__}: {settings.merged_settings=}")
         #
         api_token = SecretField.parse_obj(settings.merged_settings["api_token"])
         try:
@@ -291,10 +309,16 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         except AttributeError:
             api_token = api_token.unsecret(None)
         #
+        model_parameters = {}
+        #
+        for param in ["max_tokens", "temperature", "top_p", "top_k"]:
+            if param in settings.merged_settings:
+                model_parameters[param] = settings.merged_settings[param]
+        #
         target_kwargs = {
             "model": settings.merged_settings["model_name"],
-            "temperature": settings.merged_settings["temperature"],
-            "max_tokens": settings.merged_settings["max_tokens"],
+            #
+            **model_parameters,
             #
             "azure_endpoint": settings.merged_settings["api_base"],
             "api_version": settings.merged_settings["api_version"],
@@ -329,8 +353,8 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Stream model """
         #
-        log.debug(f"{settings=}")
-        log.debug(f"{settings.merged_settings=}")
+        log.debug(f"{__name__}: {settings=}")
+        log.debug(f"{__name__}: {settings.merged_settings=}")
         #
         api_token = SecretField.parse_obj(settings.merged_settings["api_token"])
         try:
@@ -338,10 +362,16 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         except AttributeError:
             api_token = api_token.unsecret(None)
         #
+        model_parameters = {}
+        #
+        for param in ["max_tokens", "temperature", "top_p", "top_k"]:
+            if param in settings.merged_settings:
+                model_parameters[param] = settings.merged_settings[param]
+        #
         target_kwargs = {
             "model": settings.merged_settings["model_name"],
-            "temperature": settings.merged_settings["temperature"],
-            "max_tokens": settings.merged_settings["max_tokens"],
+            #
+            **model_parameters,
             #
             "azure_endpoint": settings.merged_settings["api_base"],
             "api_version": settings.merged_settings["api_version"],
@@ -383,7 +413,7 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Make embeddings """
         #
-        log.debug(f"{settings=}")
+        log.debug(f"{__name__}: {settings=}")
         #
         api_token = settings["integration_data"]["settings"]["api_token"]
         #
@@ -429,7 +459,7 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Make embedding """
         #
-        log.debug(f"{settings=}")
+        log.debug(f"{__name__}: {settings=}")
         #
         api_token = settings["integration_data"]["settings"]["api_token"]
         #
@@ -479,7 +509,7 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Make indexer config """
         #
-        log.debug(f"{settings=}")
+        log.debug(f"{__name__}: {settings=}")
         #
         model_info = None
         #
@@ -515,15 +545,19 @@ class Method:  # pylint: disable=E1101,R0903,W0201
                 },
             }
         #
+        model_parameters = {}
+        #
+        for param in ["max_tokens", "temperature", "top_p", "top_k"]:
+            if param in settings["settings"]:
+                model_parameters[param] = settings["settings"][param]
+        #
         if not model_info["capabilities"]["chat_completion"]:
             return {
                 "ai_model": "langchain_openai.llms.azure.AzureOpenAI",
                 "ai_model_params": {
                     "model": model,
                     #
-                    "temperature": settings["settings"]["temperature"],
-                    "max_tokens": settings["settings"]["max_tokens"],
-                    #
+                    **model_parameters,
                     **auth_kwargs,
                 },
             }
@@ -533,9 +567,7 @@ class Method:  # pylint: disable=E1101,R0903,W0201
             "ai_model_params": {
                 "model": model,
                 #
-                "temperature": settings["settings"]["temperature"],
-                "max_tokens": settings["settings"]["max_tokens"],
-                #
+                **model_parameters,
                 **auth_kwargs,
             },
         }
