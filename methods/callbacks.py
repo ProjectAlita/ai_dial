@@ -128,7 +128,7 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         #
         model_parameters = {}
         #
-        for param in ["max_tokens", "temperature", "top_p", "top_k"]:
+        for param in ["max_tokens", "temperature", "top_p"]:
             if param in settings.merged_settings:
                 model_parameters[param] = settings.merged_settings[param]
         #
@@ -198,7 +198,7 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         #
         model_parameters = {}
         #
-        for param in ["max_tokens", "temperature", "top_p", "top_k"]:
+        for param in ["max_tokens", "temperature", "top_p"]:
             if param in settings.merged_settings:
                 model_parameters[param] = settings.merged_settings[param]
         #
@@ -251,7 +251,7 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         #
         model_parameters = {}
         #
-        for param in ["max_tokens", "temperature", "top_p", "top_k"]:
+        for param in ["max_tokens", "temperature", "top_p"]:
             if param in settings.merged_settings:
                 model_parameters[param] = settings.merged_settings[param]
         #
@@ -311,7 +311,7 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         #
         model_parameters = {}
         #
-        for param in ["max_tokens", "temperature", "top_p", "top_k"]:
+        for param in ["max_tokens", "temperature", "top_p"]:
             if param in settings.merged_settings:
                 model_parameters[param] = settings.merged_settings[param]
         #
@@ -364,7 +364,7 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         #
         model_parameters = {}
         #
-        for param in ["max_tokens", "temperature", "top_p", "top_k"]:
+        for param in ["max_tokens", "temperature", "top_p"]:
             if param in settings.merged_settings:
                 model_parameters[param] = settings.merged_settings[param]
         #
@@ -547,7 +547,7 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         #
         model_parameters = {}
         #
-        for param in ["max_tokens", "temperature", "top_p", "top_k"]:
+        for param in ["max_tokens", "temperature", "top_p"]:
             if param in settings["settings"]:
                 model_parameters[param] = settings["settings"][param]
         #
