@@ -22,7 +22,7 @@ import json
 from pylon.core.tools import log  # pylint: disable=E0611,E0401,W0611
 from pylon.core.tools import web  # pylint: disable=E0611,E0401,W0611
 
-from plugins.integrations.models.pd.integration import SecretField  # pylint: disable=E0401
+from tool import worker_client  # pylint: disable=E0401
 
 
 class Method:  # pylint: disable=E1101,R0903,W0201
@@ -113,11 +113,14 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Count input/output/data tokens """
         #
-        api_token = SecretField.parse_obj(settings.merged_settings["api_token"])
         try:
-            api_token = api_token.unsecret(settings.integration.project_id)
+            project_id = settings.integration.project_id
         except AttributeError:
-            api_token = api_token.unsecret(None)
+            project_id = None
+        #
+        api_token = worker_client.unsecret_data(
+            settings.merged_settings["api_token"], project_id
+        )
         #
         model_parameters = {}
         #
@@ -180,11 +183,14 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Call model """
         #
-        api_token = SecretField.parse_obj(settings.merged_settings["api_token"])
         try:
-            api_token = api_token.unsecret(settings.integration.project_id)
+            project_id = settings.integration.project_id
         except AttributeError:
-            api_token = api_token.unsecret(None)
+            project_id = None
+        #
+        api_token = worker_client.unsecret_data(
+            settings.merged_settings["api_token"], project_id
+        )
         #
         model_parameters = {}
         #
@@ -230,11 +236,14 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Stream model """
         #
-        api_token = SecretField.parse_obj(settings.merged_settings["api_token"])
         try:
-            api_token = api_token.unsecret(settings.integration.project_id)
+            project_id = settings.integration.project_id
         except AttributeError:
-            api_token = api_token.unsecret(None)
+            project_id = None
+        #
+        api_token = worker_client.unsecret_data(
+            settings.merged_settings["api_token"], project_id
+        )
         #
         model_parameters = {}
         #
@@ -287,11 +296,14 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Call model """
         #
-        api_token = SecretField.parse_obj(settings.merged_settings["api_token"])
         try:
-            api_token = api_token.unsecret(settings.integration.project_id)
+            project_id = settings.integration.project_id
         except AttributeError:
-            api_token = api_token.unsecret(None)
+            project_id = None
+        #
+        api_token = worker_client.unsecret_data(
+            settings.merged_settings["api_token"], project_id
+        )
         #
         model_parameters = {}
         #
@@ -337,11 +349,14 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Stream model """
         #
-        api_token = SecretField.parse_obj(settings.merged_settings["api_token"])
         try:
-            api_token = api_token.unsecret(settings.integration.project_id)
+            project_id = settings.integration.project_id
         except AttributeError:
-            api_token = api_token.unsecret(None)
+            project_id = None
+        #
+        api_token = worker_client.unsecret_data(
+            settings.merged_settings["api_token"], project_id
+        )
         #
         model_parameters = {}
         #
@@ -394,13 +409,14 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Make embeddings """
         #
-        api_token = settings["integration_data"]["settings"]["api_token"]
+        try:
+            project_id = settings["integration_data"]["project_id"]
+        except (AttributeError, KeyError):
+            project_id = None
         #
-        if not isinstance(api_token, str):
-            try:
-                api_token = api_token.unsecret(settings["integration_data"]["project_id"])
-            except (AttributeError, KeyError):
-                api_token = api_token.unsecret(None)
+        api_token = worker_client.unsecret_data(
+            settings["integration_data"]["settings"]["api_token"], project_id
+        )
         #
         target_kwargs = {
             "model": settings["model_name"],
@@ -438,13 +454,14 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         ):
         """ Make embedding """
         #
-        api_token = settings["integration_data"]["settings"]["api_token"]
+        try:
+            project_id = settings["integration_data"]["project_id"]
+        except (AttributeError, KeyError):
+            project_id = None
         #
-        if not isinstance(api_token, str):
-            try:
-                api_token = api_token.unsecret(settings["integration_data"]["project_id"])
-            except (AttributeError, KeyError):
-                api_token = api_token.unsecret(None)
+        api_token = worker_client.unsecret_data(
+            settings["integration_data"]["settings"]["api_token"], project_id
+        )
         #
         target_kwargs = {
             "model": settings["model_name"],
@@ -496,13 +513,14 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         if model_info is None:
             raise RuntimeError(f"No model info found: {model}")
         #
-        api_token = settings["settings"]["api_token"]
+        try:
+            project_id = settings["project_id"]
+        except (AttributeError, KeyError):
+            project_id = None
         #
-        if not isinstance(api_token, str):
-            try:
-                api_token = api_token.unsecret(settings["project_id"])
-            except (AttributeError, KeyError):
-                api_token = api_token.unsecret(None)
+        api_token = worker_client.unsecret_data(
+            settings["settings"]["api_token"], project_id
+        )
         #
         auth_kwargs = {
             "azure_endpoint": settings["settings"]["api_base"],
