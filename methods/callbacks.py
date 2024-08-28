@@ -22,7 +22,7 @@ import json
 from pylon.core.tools import log  # pylint: disable=E0611,E0401,W0611
 from pylon.core.tools import web  # pylint: disable=E0611,E0401,W0611
 
-from tool import worker_client  # pylint: disable=E0401
+from tools import worker_client  # pylint: disable=E0401
 
 
 class Method:  # pylint: disable=E1101,R0903,W0201
