@@ -1,5 +1,5 @@
 from flask import request
-from pydantic import ValidationError
+from pydantic.v1 import ValidationError
 from tools import api_tools
 
 from ...models.integration_pd import IntegrationModel
