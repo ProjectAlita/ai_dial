@@ -1,5 +1,5 @@
 import json
-from pydantic import BaseModel, conlist, root_validator, validator
+from pydantic.v1 import BaseModel, conlist, root_validator, validator
 from typing import List, Optional
 
 from pylon.core.tools import log

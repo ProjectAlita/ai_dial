@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional, List, Union, Any, Mapping
 
-from pydantic import (
+from pydantic.v1 import (
     BaseModel,
     StrictStr,
     ConstrainedFloat,

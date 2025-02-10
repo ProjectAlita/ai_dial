@@ -1,4 +1,4 @@
-from pydantic import ValidationError
+from pydantic.v1 import ValidationError
 from pylon.core.tools import web, log
 from traceback import format_exc
 
