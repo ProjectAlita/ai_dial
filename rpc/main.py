@@ -2,11 +2,10 @@ from pydantic.v1 import ValidationError
 from pylon.core.tools import web, log
 from traceback import format_exc
 
-from tools import rpc_tools, worker_client, this
+from tools import rpc_tools, worker_client, this, SecretString
 from ..models.integration_pd import IntegrationModel, AIDialSettings, AIModel
 from ..models.request_body import ChatCompletionRequestBody
 from ..utils import predict_chat,  predict_chat_from_request
-from ...integrations.models.pd.integration import SecretField
 
 
 # def _get_redis_client():
@@ -78,10 +77,10 @@ class RPC:
             "api_version": payload["settings"]["api_version"],
         }
         #
-        if isinstance(payload['settings'].get('api_token', {}), SecretField):
+        if isinstance(payload['settings'].get('api_token', {}), SecretString):
             token_field = payload['settings'].get('api_token')
         else:
-            token_field = SecretField.parse_obj(
+            token_field = SecretString(
                 payload['settings'].get('api_token', {})
             )
         #
