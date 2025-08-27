@@ -122,14 +122,17 @@ class Method:  # pylint: disable=E1101,R0903,W0201
             settings.merged_settings["api_token"], project_id
         )
         #
+        model = settings.merged_settings["model_name"]
         model_parameters = {}
         #
         for param in ["max_tokens", "temperature", "top_p"]:
             if param in settings.merged_settings:
                 model_parameters[param] = settings.merged_settings[param]
         #
+        model_parameters = self.override_ai_model_params(model, model_parameters)
+        #
         target_kwargs = {
-            "model": settings.merged_settings["model_name"],
+            "model": model,
             #
             **model_parameters,
             #
@@ -192,14 +195,17 @@ class Method:  # pylint: disable=E1101,R0903,W0201
             settings.merged_settings["api_token"], project_id
         )
         #
+        model = settings.merged_settings["model_name"]
         model_parameters = {}
         #
         for param in ["max_tokens", "temperature", "top_p"]:
             if param in settings.merged_settings:
                 model_parameters[param] = settings.merged_settings[param]
         #
+        model_parameters = self.override_ai_model_params(model, model_parameters)
+        #
         target_kwargs = {
-            "model": settings.merged_settings["model_name"],
+            "model": model,
             #
             **model_parameters,
             #
@@ -245,14 +251,17 @@ class Method:  # pylint: disable=E1101,R0903,W0201
             settings.merged_settings["api_token"], project_id
         )
         #
+        model = settings.merged_settings["model_name"]
         model_parameters = {}
         #
         for param in ["max_tokens", "temperature", "top_p"]:
             if param in settings.merged_settings:
                 model_parameters[param] = settings.merged_settings[param]
         #
+        model_parameters = self.override_ai_model_params(model, model_parameters)
+        #
         target_kwargs = {
-            "model": settings.merged_settings["model_name"],
+            "model": model,
             #
             **model_parameters,
             #
@@ -305,14 +314,17 @@ class Method:  # pylint: disable=E1101,R0903,W0201
             settings.merged_settings["api_token"], project_id
         )
         #
+        model = settings.merged_settings["model_name"]
         model_parameters = {}
         #
         for param in ["max_tokens", "temperature", "top_p"]:
             if param in settings.merged_settings:
                 model_parameters[param] = settings.merged_settings[param]
         #
+        model_parameters = self.override_ai_model_params(model, model_parameters)
+        #
         target_kwargs = {
-            "model": settings.merged_settings["model_name"],
+            "model": model,
             #
             **model_parameters,
             #
@@ -358,14 +370,17 @@ class Method:  # pylint: disable=E1101,R0903,W0201
             settings.merged_settings["api_token"], project_id
         )
         #
+        model = settings.merged_settings["model_name"]
         model_parameters = {}
         #
         for param in ["max_tokens", "temperature", "top_p"]:
             if param in settings.merged_settings:
                 model_parameters[param] = settings.merged_settings[param]
         #
+        model_parameters = self.override_ai_model_params(model, model_parameters)
+        #
         target_kwargs = {
-            "model": settings.merged_settings["model_name"],
+            "model": model,
             #
             **model_parameters,
             #
@@ -543,6 +558,8 @@ class Method:  # pylint: disable=E1101,R0903,W0201
         for param in ["max_tokens", "temperature", "top_p"]:
             if param in settings["settings"]:
                 model_parameters[param] = settings["settings"][param]
+        #
+        model_parameters = self.override_ai_model_params(model, model_parameters)
         #
         if not model_info["capabilities"]["chat_completion"]:
             return {
